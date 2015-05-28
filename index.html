@@ -117,8 +117,8 @@
           
           
             
-              <a class="post-title-link" href="/2015/05/23/hello-world/">
-                Hello World
+              <a class="post-title-link" href="/2015/05/28/支付宝携程所想/">
+                支付宝携程所想
               </a>
             
           
@@ -127,7 +127,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-05-23
+          发表于 2015-05-28
         </span>
 
         
@@ -136,8 +136,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/05/23/hello-world/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/23/hello-world/"></span>
+            <a href="/2015/05/28/支付宝携程所想/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/28/支付宝携程所想/"></span>
             </a>
           </span>
           
@@ -152,21 +152,98 @@
 
       
         
-          <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+          <p>支付宝携程服务接连出现问题，本来不打算多说些什么来着，其实大家都挺明白都有苦衷。但是这次思考下，如果我们遇到类似问题怎么办？</p>
+<h4 id="支付宝的事">支付宝的事</h4><p>说实在的真的挺难处理。现在互联网服务说是分布式集群服务，但是或多或少还是存在难以分布的单点的。支付宝全国都有机房，估计北京的某个机房光纤挂断了，大家连知道都不知道。一旦某重要难以分布式部署的服务出现问题，就是服务可能短时间中断。</p>
+<p>现在大部分中小型互联网企业实际上很难做到基本真正意义上的同城双机房双活。（比如双机房数据存储的同步，机房之间专线的高可用，数据CAP），但是大家基本可以做到web服务器多机房多点无状态部署，服务分级管理及服务隔离等，数据备份和失效转移，缓存就近部署等。</p>
+<h3 id="携程的事">携程的事</h3><p>据传是某技术人员由于人为操作失误不知道删了一个什么根目录文件于是乎导致灵异事件发生,线上数据全部被删，再次发布依旧被删。</p>
+<p>对于高可用的互联网服务来说，携程的事的确挺悲哀的。<br>互联网企业最起码应该能保证，快速部署最基本服务单元的能力。其实就是临时搞来一批裸机，摘掉某些数据备机，能在30分钟内，快速搭建一套降级后基本核心服务。然后将流量切到该服务单元。这种能力在平时就是服务伸缩性的一种体现。搞活动流量激增，分分钟将瓶颈处的资源快速水平扩容也类似，不过这种扩容更简单。</p>
+<p>对于中小互联网企业。假如出现不明原因的宕机或者服务不可用。排查问题的同时，第一时间一天时间内所有代码和变更回滚（此处应做到自动化）。为啥要回滚，因为99%严重的故障都是<em>自己人作死</em>，或者新上线代码问题或者有配置变更诸如此类。程序员每次上线都紧张不是没有道理的。如果还是有问题，如果有明显的资源使用紧张还可以逐步服务降级，服务降级就是去除非核心服务比如论坛。（此处要有事前规划），为啥要服务降级，一般来说大家都有坑死队友的潜力。没有资源紧张的征兆就快速拿资源构建降级后基本核心服务，验证之后切流量之类。代码和变更回滚可以在5分钟内解决到99.9%的故障。后者可以在30分钟内使核心服务恢复正常。</p>
+<h3 id="吐个槽，别人的灾难不是你快乐的盛宴">吐个槽，别人的灾难不是你快乐的盛宴</h3><p>最后说句驱动公司技术发展的主要力量还是公司的业务发展。如果你公司PV都不过亿就跟着支付宝搞什么两地三中心了。一个机房做好冗余也不错。毕竟挖断光纤这事不是年年都能遇上的。</p>
 
         
       
     </div>
 
     <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/服务高可用，伸缩性/"> #服务高可用，伸缩性 </a>
+          
+        </div>
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/05/26/php-float/">
+                PHP 浮点数
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-05-26
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/05/26/php-float/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/26/php-float/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <h3 id="浮点数精度">浮点数精度</h3><p>JS:你使用的是 Chrome、FireFox、IE 8+，可以按 F12 键，然后找到 「控制台」，输入上面的 表达式 0.2 + 0.4，回车<br>PHP:官网例子floor((0.1+0.7)*10) 通常会返回 7 而不是预期中的 8，因为该结果内部的表示其实是类似 7.9999999999999991118…。<br>为啥不对那，不是BUG。</p>
+<h3 id="浮点数">浮点数</h3><p>计算机系统里 32bit 最多只能表示 2^32 个数，大约是 4 x 10^9。但是任何语言都宣称他们的浮点数的表示范围是 3 x 10^38</p>
+<h3 id="不能表示_VS_不能精确表示">不能表示 VS 不能精确表示</h3>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PHP/"> #PHP </a>
+          
+        </div>
       
 
       
@@ -214,7 +291,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -228,7 +305,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -495,7 +572,7 @@
   
 
   <script type="text/javascript">
-    var HEXO_SIDEBAR_CONFIGURATION = 'always';
+    var HEXO_SIDEBAR_CONFIGURATION = 'hide';
     $(document).ready(function () {
       if (HEXO_SIDEBAR_CONFIGURATION === 'always') {
         displaySidebar();

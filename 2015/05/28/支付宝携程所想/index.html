@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="Hexo,next" />
+  <meta name="keywords" content="服务高可用，伸缩性," />
 
 
 
@@ -43,7 +43,7 @@
   </script>
 
 
-  <title> Hello World // lvyalin blog </title>
+  <title> 支付宝携程所想 // lvyalin blog </title>
 </head>
 
 <body>
@@ -115,7 +115,7 @@
           
           
             
-              Hello World
+              支付宝携程所想
             
           
         </h1>
@@ -123,7 +123,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-05-23
+          发表于 2015-05-28
         </span>
 
         
@@ -132,8 +132,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/05/23/hello-world/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/23/hello-world/"></span>
+            <a href="/2015/05/28/支付宝携程所想/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/28/支付宝携程所想/"></span>
             </a>
           </span>
           
@@ -147,22 +147,38 @@
       
 
       
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <p>支付宝携程服务接连出现问题，本来不打算多说些什么来着，其实大家都挺明白都有苦衷。但是这次思考下，如果我们遇到类似问题怎么办？</p>
+<h4 id="支付宝的事">支付宝的事</h4><p>说实在的真的挺难处理。现在互联网服务说是分布式集群服务，但是或多或少还是存在难以分布的单点的。支付宝全国都有机房，估计北京的某个机房光纤挂断了，大家连知道都不知道。一旦某重要难以分布式部署的服务出现问题，就是服务可能短时间中断。</p>
+<p>现在大部分中小型互联网企业实际上很难做到基本真正意义上的同城双机房双活。（比如双机房数据存储的同步，机房之间专线的高可用，数据CAP），但是大家基本可以做到web服务器多机房多点无状态部署，服务分级管理及服务隔离等，数据备份和失效转移，缓存就近部署等。</p>
+<h3 id="携程的事">携程的事</h3><p>据传是某技术人员由于人为操作失误不知道删了一个什么根目录文件于是乎导致灵异事件发生,线上数据全部被删，再次发布依旧被删。</p>
+<p>对于高可用的互联网服务来说，携程的事的确挺悲哀的。<br>互联网企业最起码应该能保证，快速部署最基本服务单元的能力。其实就是临时搞来一批裸机，摘掉某些数据备机，能在30分钟内，快速搭建一套降级后基本核心服务。然后将流量切到该服务单元。这种能力在平时就是服务伸缩性的一种体现。搞活动流量激增，分分钟将瓶颈处的资源快速水平扩容也类似，不过这种扩容更简单。</p>
+<p>对于中小互联网企业。假如出现不明原因的宕机或者服务不可用。排查问题的同时，第一时间一天时间内所有代码和变更回滚（此处应做到自动化）。为啥要回滚，因为99%严重的故障都是<em>自己人作死</em>，或者新上线代码问题或者有配置变更诸如此类。程序员每次上线都紧张不是没有道理的。如果还是有问题，如果有明显的资源使用紧张还可以逐步服务降级，服务降级就是去除非核心服务比如论坛。（此处要有事前规划），为啥要服务降级，一般来说大家都有坑死队友的潜力。没有资源紧张的征兆就快速拿资源构建降级后基本核心服务，验证之后切流量之类。代码和变更回滚可以在5分钟内解决到99.9%的故障。后者可以在30分钟内使核心服务恢复正常。</p>
+<h3 id="吐个槽，别人的灾难不是你快乐的盛宴">吐个槽，别人的灾难不是你快乐的盛宴</h3><p>最后说句驱动公司技术发展的主要力量还是公司的业务发展。如果你公司PV都不过亿就跟着支付宝搞什么两地三中心了。一个机房做好冗余也不错。毕竟挖断光纤这事不是年年都能遇上的。</p>
 
       
     </div>
 
     <div class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/服务高可用，伸缩性/"> #服务高可用，伸缩性 </a>
+          
+        </div>
+      
 
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/26/php-float/">PHP 浮点数</a>
+            
+          </div>
+        </div>
       
 
       
@@ -175,8 +191,8 @@
     
       <div class="comments" id="comments">
         
-          <div class="ds-thread" data-thread-key="2015/05/23/hello-world/"
-               data-title="Hello World" data-url="http://lvyalin.github.com/2015/05/23/hello-world/">
+          <div class="ds-thread" data-thread-key="2015/05/28/支付宝携程所想/"
+               data-title="支付宝携程所想" data-url="http://lvyalin.github.com/2015/05/28/支付宝携程所想/">
           </div>
         
       </div>
@@ -223,7 +239,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -237,7 +253,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">0</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -271,7 +287,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick_Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Create_a_new_post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Run_server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Generate_static_files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deploy_to_remote_sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#支付宝的事"><span class="nav-number">1.</span> <span class="nav-text">支付宝的事</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#携程的事"><span class="nav-number"></span> <span class="nav-text">携程的事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#吐个槽，别人的灾难不是你快乐的盛宴"><span class="nav-number"></span> <span class="nav-text">吐个槽，别人的灾难不是你快乐的盛宴</span></a></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -834,7 +850,7 @@
 
 
   <script type="text/javascript">
-    var HEXO_SIDEBAR_CONFIGURATION = 'always';
+    var HEXO_SIDEBAR_CONFIGURATION = 'hide';
     $(document).ready(function () {
       if (HEXO_SIDEBAR_CONFIGURATION === 'always') {
         displaySidebar();
