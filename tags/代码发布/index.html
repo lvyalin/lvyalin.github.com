@@ -43,14 +43,12 @@
   </script>
 
 
-  <title> lvyalin blog </title>
+  <title> 标签: 代码发布 // lvyalin blog </title>
 </head>
 
 <body>
 <!--[if lte IE 8]> <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'> <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode"><img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari." style='margin-left:auto;margin-right:auto;display: block;'/></a></div> <![endif]-->
-  <div class="container one-column 
-   page-home 
-">
+  <div class="container one-column ">
     <div class="headband"></div>
 
     <div id="header" class="header">
@@ -104,165 +102,33 @@
       <div class="main-inner">
         <div id="content" class="content">
           
-  <div id="posts" class="posts-expand">
-    
-      
 
-  <div class="post post-type-normal ">
-    <div class="post-header">
-
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/05/30/代码发布/">
-                代码发布
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-05-30
-        </span>
-
-        
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/05/30/代码发布/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/30/代码发布/"></span>
-            </a>
-          </span>
-          
-        
-      </div>
+  <div id="posts" class="posts-collapse">
+    <div class="collection-title">
+      <h2 >
+        代码发布
+        <small>标签</small>
+      </h2>
     </div>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <h3 id="为什么要谈代码发布">为什么要谈代码发布</h3><p>互联网服务一般来说都是要求高可用运行，可用性能达到99.99%以上，大型公司要求是5个9甚至更多，但是往往业务需要不断快速迭代以在市场竞争中成功。我待过公司有时每天发布十几次之多，尤其在快速发展的核心业务线上更是如此。与之相对的是每次上次都有可能引发故障，而且往往90%以上的线上故障都是由变更引发的。我们还需要用户体验上平滑的无感知的发布。</p>
-<h3 id="平滑发布">平滑发布</h3><p>我们可以假设一个常见的架构，我们有1000台web服务器，请求流量通过HA分发到所有服务器上，同时有CDN节点部署静态资源。<br>我们发布的过程中可能遇到的几个问题：<br>1、部署的过程中产生了先后顺序，用户请求的时候有的是完成部署的服务器有的是没有部署的服务器。<br>2、静态资源的问题，因为存在浏览器缓存的问题，导致用户访问出错。<br>3、CDN更新问题。也会导致用户访问静态资源出错。</p>
-<p>关于前端资源缓存的问题，基本的解决思路是非覆盖式发布。用文件的摘要信息来对资源文件进行重命名，把摘要信息放到资源文件发布路径中，这样，内容有修改的资源就变成了一个新的文件发布到线上，不会覆盖已有的资源文件。上线过程中，先全量部署静态资源，再灰度部署页面，整个问题就比较完美的解决了。可以参考百度实现方案<a href="http://fis.baidu.com/index.html" target="_blank" rel="external">http://fis.baidu.com/index.html</a></p>
-<p>关于代码部署顺序问题。基本的解决思路是把代码推送和代码变更分离。将代码打包推送到服务器上。当所有机器都推送完成后，统一进行变更。具体做法是将打包代码时文件夹命名为项目名+svn版本号。当所有机器推送完成，并且包md5校验完成后，统一发送变更信号，系统接受信号后，将推送的代码文件夹建立软连到正式文件夹。完成变更。如果要求更加精准可以将发布定时变更信号（即在12:00:00统一变更）。前者误差在100ms内1000台机器可以完成变更，后者误差取决于机器时间的校对，如果时间校对正确可以保证基本没有误差。<br>其他的实现方式<br>第一种，让同一个用户的多次请求永远都在同一台机器上就不会有部署先后问题。即种会话保持cookie。但是问题往往不是这么简单。如果是接口请求怎么办？比如你维护了一个接口调用，这种请求是服务端调用根本不是用户的请求。还是存在问题。<br>第二种，通过调整负载均衡设备将部分设备下线，下线后部署。部署完成后，将下线机器上线，将线上机器下线部署。直到全部部署完成。这样问题是会导致发布过程中服务容量缩水。上线过程漫长。</p>
-<h3 id="减少或者尽量避免发布导致的故障">减少或者尽量避免发布导致的故障</h3><p>互联网公司一般会采用技术上和必要流程来控制上线故障。不能极端的相信只靠流程能解决一切问题。鄙视下线下走纸质审批上线的公司。有种回到石器时代的感觉。</p>
-<h4 id="火车模型">火车模型</h4><p>火车模型是指把上线过程看做一次火车旅行。旅行中有许多站点（检查项），必须停靠这些站点（完成检查）才能向下一个进发，直到终点（成功）。也可以对应出简化版，以满足重大变更上线，和修改一个简单bug这两种情况。<br>重大变更上线<br>简单变更上线</p>
-<h4 id="自动化测试">自动化测试</h4><p>当产品快速迭代，上线频繁的时候，每次上线如果只测试修改的功能点，可能导致覆盖面不够，上线后出现bug。但是如果做所有功能测试即使是全部主功能测试，时间和人力成本也是产品不能接受的。对于服务端来说，覆盖所有功能或者主功能的自动化测试至关重要，工程师只要花几分钟就可以将所有流程测试一遍。以保证代码逻辑的正确性。对于前端来说可以使用selenium之类浏览器驱动的自动化测试工具完成web功能测试和浏览器兼容测试。</p>
-<h4 id="准生产测试">准生产测试</h4><p>之所以要做准生产测试，是因为线上环境和线下环境区别导致的。环境差异可能是，数据库、接口、缓存、第三方服务比如短信和银行接口。比如数据库结构不一致，接口变化，配置错误，扩展缺失。这些都可以导致应用故障。也就是非线上环境无法100%模拟线上环境，这就是准生产测试的意义用于排除环境差异上的问题。准生产测试服务器和正式服务器区别在于没有在负载均衡设备上，用户不能访问，其他完全一致。如果在准生产环境下测试通过，那么在生产环境上一定是成功的。</p>
-<h4 id="回退方案">回退方案</h4><p>即使我们做了再多的工作也不可能避免发布故障发生。回退方案就是在故障真实发生的情况下，最大程度的减少危害的方式。所以回退方案一定要制定，并且有自动化实施脚本。发生变更导致的故障时，第一时间对某个时间段内的上线做回退。不要试图线上解决问题。在回退结束后去解决问题，再走上线流程。自动化实施回退的意义在于不要认为发生故障时，程序员手忙脚乱的能回退成功，况且在不经常回退或者第一次回退的情况下。</p>
-
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/代码发布/"> #代码发布 </a>
-          
-            <a href="/tags/变更/"> #变更 </a>
-          
-            <a href="/tags/高可用/"> #高可用 </a>
-          
-        </div>
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </div>
-  </div>
-
 
     
       
 
-  <div class="post post-type-normal ">
+  <div class="post post-type-normal">
     <div class="post-header">
 
-      
-      
-        <h1 class="post-title">
-          
-          
-            
-              <a class="post-title-link" href="/2015/05/28/支付宝携程所想/">
-                支付宝携程所想
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于 2015-05-28
-        </span>
-
+      <div class="post-title">
         
-
-        
-          
-            <span class="post-comments-count">
-            &nbsp; | &nbsp;
-            <a href="/2015/05/28/支付宝携程所想/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/28/支付宝携程所想/"></span>
+            <a class="post-title-link" href="/2015/05/30/代码发布/">
+              代码发布
             </a>
-          </span>
-          
         
       </div>
-    </div>
 
-    <div class="post-body">
+      <div class="post-meta">
+        <span class="post-time"> 05-30 </span>
+      </div>
 
-      
-      
-
-      
-        
-          <p>支付宝携程服务接连出现问题，本来不打算多说些什么来着，其实大家都挺明白都有苦衷。但是这次思考下，如果我们遇到类似问题怎么办？</p>
-<h4 id="支付宝的事">支付宝的事</h4><p>说实在的真的挺难处理。现在互联网服务说是分布式集群服务，但是或多或少还是存在难以分布的单点的。支付宝全国都有机房，估计北京的某个机房光纤挂断了，大家连知道都不知道。一旦某重要难以分布式部署的服务出现问题，就是服务可能短时间中断。</p>
-<p>现在大部分中小型互联网企业实际上很难做到基本真正意义上的同城双机房双活。（比如双机房数据存储的同步，机房之间专线的高可用，数据CAP），但是大家基本可以做到web服务器多机房多点无状态部署，服务分级管理及服务隔离等，数据备份和失效转移，缓存就近部署等。</p>
-<h3 id="携程的事">携程的事</h3><p>据传是某技术人员由于人为操作失误不知道删了一个什么根目录文件于是乎导致灵异事件发生,线上数据全部被删，再次发布依旧被删。</p>
-<p>对于高可用的互联网服务来说，携程的事的确挺悲哀的。<br>互联网企业最起码应该能保证，快速部署最基本服务单元的能力。其实就是临时搞来一批裸机，摘掉某些数据备机，能在30分钟内，快速搭建一套降级后基本核心服务。然后将流量切到该服务单元。这种能力在平时就是服务伸缩性的一种体现。搞活动流量激增，分分钟将瓶颈处的资源快速水平扩容也类似，不过这种扩容更简单。</p>
-<p>对于中小互联网企业。假如出现不明原因的宕机或者服务不可用。排查问题的同时，第一时间一天时间内所有代码和变更回滚（此处应做到自动化）。为啥要回滚，因为99%严重的故障都是<em>自己人作死</em>，或者新上线代码问题或者有配置变更诸如此类。程序员每次上线都紧张不是没有道理的。如果还是有问题，如果有明显的资源使用紧张还可以逐步服务降级，服务降级就是去除非核心服务比如论坛。（此处要有事前规划），为啥要服务降级，一般来说大家都有坑死队友的潜力。没有资源紧张的征兆就快速拿资源构建降级后基本核心服务，验证之后切流量之类。代码和变更回滚可以在5分钟内解决到99.9%的故障。后者可以在30分钟内使核心服务恢复正常。</p>
-<h3 id="吐个槽，别人的灾难不是你快乐的盛宴">吐个槽，别人的灾难不是你快乐的盛宴</h3><p>最后说句驱动公司技术发展的主要力量还是公司的业务发展。如果你公司PV都不过亿就跟着支付宝搞什么两地三中心了。一个机房做好冗余也不错。毕竟挖断光纤这事不是年年都能遇上的。</p>
-
-        
-      
-    </div>
-
-    <div class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/服务高可用，伸缩性/"> #服务高可用，伸缩性 </a>
-          
-        </div>
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
     </div>
   </div>
 
@@ -387,6 +253,12 @@
 
   
   
+  
+    <script type="text/javascript">
+      postMotionOptions = {stagger: 100, drag: true};
+    </script>
+  
+
 
   
   <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
@@ -594,26 +466,6 @@
   
 
   
-  
-
-  
-    
-  
-
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"lvyalingit"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
-
-  
-
 
   
   
