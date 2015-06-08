@@ -26,6 +26,8 @@
 
 
 
+  <link rel="alternate" href="/atom.xml" title="lvyalin blog" type="application/atom+xml" />
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.2" />
@@ -92,6 +94,14 @@
         </a>
       </li>
     
+      
+      <li class="menu-item menu-item-rss">
+        <a href="/atom.xml">
+          <i class="menu-item-icon icon-rss"></i> <br />
+          menu.rss
+        </a>
+      </li>
+    
   </ul>
 
 
@@ -148,6 +158,7 @@
 
       
         <p>支付宝携程服务接连出现问题，本来不打算多说些什么来着，其实大家都挺明白都有苦衷。但是这次思考下，如果我们遇到类似问题怎么办？</p>
+<a id="more"></a>
 <h4 id="支付宝的事">支付宝的事</h4><p>说实在的真的挺难处理。现在互联网服务说是分布式集群服务，但是或多或少还是存在难以分布的单点的。支付宝全国都有机房，估计北京的某个机房光纤挂断了，大家连知道都不知道。一旦某重要难以分布式部署的服务出现问题，就是服务可能短时间中断。</p>
 <p>现在大部分中小型互联网企业实际上很难做到基本真正意义上的同城双机房双活。（比如双机房数据存储的同步，机房之间专线的高可用，数据CAP），但是大家基本可以做到web服务器多机房多点无状态部署，服务分级管理及服务隔离等，数据备份和失效转移，缓存就近部署等。</p>
 <h3 id="携程的事">携程的事</h3><p>据传是某技术人员由于人为操作失误不知道删了一个什么根目录文件于是乎导致灵异事件发生,线上数据全部被删，再次发布依旧被删。</p>
@@ -239,7 +250,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -253,13 +264,20 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
 
         </div>
 
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">

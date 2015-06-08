@@ -26,6 +26,8 @@
 
 
 
+  <link rel="alternate" href="/atom.xml" title="lvyalin blog" type="application/atom+xml" />
+
 
 
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.2" />
@@ -92,6 +94,14 @@
         </a>
       </li>
     
+      
+      <li class="menu-item menu-item-rss">
+        <a href="/atom.xml">
+          <i class="menu-item-icon icon-rss"></i> <br />
+          menu.rss
+        </a>
+      </li>
+    
   </ul>
 
 
@@ -148,6 +158,7 @@
 
       
         <h3 id="为什么要谈代码发布">为什么要谈代码发布</h3><p>互联网服务一般来说都是要求高可用运行，可用性能达到99.99%以上，大型公司要求是5个9甚至更多，但是往往业务需要不断快速迭代以在市场竞争中成功。我待过公司有时每天发布十几次之多，尤其在快速发展的核心业务线上更是如此。与之相对的是每次上次都有可能引发故障，而且往往90%以上的线上故障都是由变更引发的。我们还需要用户体验上平滑的无感知的发布。</p>
+<a id="more"></a>
 <h3 id="平滑发布">平滑发布</h3><p>我们可以假设一个常见的架构，我们有1000台web服务器，请求流量通过HA分发到所有服务器上，同时有CDN节点部署静态资源。<br>我们发布的过程中可能遇到的几个问题：<br>1、部署的过程中产生了先后顺序，用户请求的时候有的是完成部署的服务器有的是没有部署的服务器。<br>2、静态资源的问题，因为存在浏览器缓存的问题，导致用户访问出错。<br>3、CDN更新问题。也会导致用户访问静态资源出错。</p>
 <p>关于前端资源缓存的问题，基本的解决思路是非覆盖式发布。用文件的摘要信息来对资源文件进行重命名，把摘要信息放到资源文件发布路径中，这样，内容有修改的资源就变成了一个新的文件发布到线上，不会覆盖已有的资源文件。上线过程中，先全量部署静态资源，再灰度部署页面，整个问题就比较完美的解决了。可以参考百度实现方案<a href="http://fis.baidu.com/index.html" target="_blank" rel="external">http://fis.baidu.com/index.html</a></p>
 <p>关于代码部署顺序问题。基本的解决思路是把代码推送和代码变更分离。将代码打包推送到服务器上。当所有机器都推送完成后，统一进行变更。具体做法是将打包代码时文件夹命名为项目名+svn版本号。当所有机器推送完成，并且包md5校验完成后，统一发送变更信号，系统接受信号后，将推送的代码文件夹建立软连到正式文件夹。完成变更。如果要求更加精准可以将发布定时变更信号（即在12:00:00统一变更）。前者误差在100ms内1000台机器可以完成变更，后者误差取决于机器时间的校对，如果时间校对正确可以保证基本没有误差。<br>其他的实现方式<br>第一种，让同一个用户的多次请求永远都在同一台机器上就不会有部署先后问题。即种会话保持cookie。但是问题往往不是这么简单。如果是接口请求怎么办？比如你维护了一个接口调用，这种请求是服务端调用根本不是用户的请求。还是存在问题。<br>第二种，通过调整负载均衡设备将部分设备下线，下线后部署。部署完成后，将下线机器上线，将线上机器下线部署。直到全部部署完成。这样问题是会导致发布过程中服务容量缩水。上线过程漫长。</p>
@@ -249,7 +260,7 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -263,13 +274,20 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
 
         </div>
 
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml">
+              <i class="menu-item-icon icon-feed"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">
