@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="phpunit, 单元测试," />
+  <meta name="keywords" content="linux,php,umask," />
 
 
 
@@ -45,7 +45,7 @@
   </script>
 
 
-  <title> phpunit // lvyalin blog </title>
+  <title> umask // lvyalin blog </title>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
           
           
             
-              phpunit
+              umask
             
           
         </h1>
@@ -133,7 +133,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-06-02
+          发表于 2015-10-30
         </span>
 
         
@@ -142,8 +142,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/06/02/phpunit/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/06/02/phpunit/"></span>
+            <a href="/2015/10/30/umask/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/30/umask/"></span>
             </a>
           </span>
           
@@ -157,41 +157,18 @@
       
 
       
-        <h3 id="单元测试的四个阶段：">单元测试的四个阶段：</h3><ol>
-<li>建立基境(fixture)</li>
-<li>执行被测系统</li>
-<li>验证结果</li>
-<li>拆除基境(fixture)</li>
-</ol>
-<p>什么是基境(fixture)？基境(fixture)是对开始执行某个测试时应用程序和数据库所处初始状态的描述。在编写测试时，最费时的部分之一是编写代码来将整个场景设置成某个已知的状态，并在测试结束后将其复原到初始状态。这个已知的状态称为测试的 基境(fixture)。<br><a id="more"></a></p>
-<h3 id="编写PHPUNIT测试">编写PHPUNIT测试</h3><p><a href="https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html" target="_blank" rel="external">https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html</a></p>
-<h3 id="PHPUNIT与YAF结合">PHPUNIT与YAF结合</h3><p>与YAF路由结合，轻易地调用你的任何一个路由来测试<br>$response = $this-&gt;execRequest($method, $uri, $parameters);<br>$this-&gt;assertEquals(‘Hello World’, $response);</p>
-<p>TestCase基类<br>&lt;?php<br>class TestCase extends \PHPUnit_Framework_TestCase {<br>    protected static $_app;</p>
-<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">()</span></span>{
-    <span class="variable">$application</span> = \Yaf\Registry::get(<span class="string">'application'</span>);
-    <span class="keyword">if</span> (!<span class="variable">$application</span>) {
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = (<span class="keyword">new</span> \Yaf\Application(APP_CONF . <span class="string">'/application.ini'</span>))-&gt;bootstrap();
-        \Yaf\Registry::set(<span class="string">'application'</span>, <span class="keyword">self</span>::<span class="variable">$_app</span>);
-    }<span class="keyword">else</span>{
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = <span class="variable">$application</span>;
-    }
-}
-
-<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">execRequest</span><span class="params">(<span class="variable">$method</span>, <span class="variable">$controller</span>, <span class="variable">$params</span> = array<span class="params">()</span>)</span></span>{
-    <span class="variable">$request</span> = <span class="keyword">new</span> \Yaf\Request\Simple(<span class="variable">$method</span>, <span class="string">'index'</span>, <span class="variable">$controller</span>, <span class="string">'index'</span>, <span class="variable">$params</span>);
-    <span class="keyword">if</span>(strtolower(<span class="variable">$method</span>) === <span class="string">"post"</span>){
-        <span class="variable">$_POST</span> = <span class="variable">$request</span>-&gt;getParams();
-    }<span class="keyword">else</span>{
-        <span class="variable">$_GET</span> = <span class="variable">$request</span>-&gt;getParams();
-    }
-    <span class="keyword">return</span> <span class="keyword">self</span>::<span class="variable">$_app</span>-&gt;getDispatcher()-&gt;dispatch(<span class="variable">$request</span>);
-}
-</code></pre><p>}<br>?&gt;</p>
-<p>测试组件和类，可以直接调用。</p>
-<h3 id="全局状态">全局状态</h3><p>使用单件(singleton)的代码很难测试。使用全局变量的代码也一样。通常情况下，欲测代码和全局变量之间会强烈耦合，并且其创建无法控制。另外一个问题是，一个测试对全局变量的改变可能会破坏另外一个测试。</p>
-<p>在PHP中，全局变量是这样运作的：全局变量 $foo = ‘bar’;<br>实际上是存储为 $GLOBALS[‘foo’] = ‘bar’; 的。<br>$GLOBALS这个变量是一种被称为超全局变量的变量。<br>超全局变量是一种在任何变量作用域中都总是可用的内建变量。<br>在函数或者方法的变量作用域中，要访问全局变量 $foo，可以直接访问 $GLOBALS[‘foo’]，或者用 global $foo;来创建一个引用全局变量的局部变量。除了全局变量，类的静态属性也是一种全局状态。</p>
-<p>默认情况下，PHPUnit用一种更改全局变量与超全局变量($GLOBALS、$_ENV、$_POST、$_GET、$_COOKIE、$_SERVER、$_FILES、$_REQUEST)不会影响到其他测试的方式来运行所有测试。同时，还可以选择将这种隔离扩展到类的静态属性。</p>
-<p>注意，对全局变量和类的静态属性的备份与还原操作使用了 serialize() 与 unserialize()。某些类的实例对象（比如 PDO）无法序列化，因此如果把这样一个对象存放在比如说 $GLOBALS 数组内时，备份操作就会出问题。@backupGlobals 标注可以用来控制对全局变量的备份与还原操作。</p>
+        <p>umask － 设置默认权限<br>当创建一个文件时，umask 命令控制着文件的默认权限。umask命令使用八进制表示法来表达从文件模式属性中删除一个位掩码<br>0022对应的文件权限是0744</p>
+<a id="more"></a>
+<h3 id="简单解释下">简单解释下</h3><p>Original file mode    —- rw- rw- rw-<br>Mask                000 000 000 010<br>Result                —- rw- rw- r—<br>此刻先忽略掉开头的三个零（我们一会儿再讨论），注意掩码中若出现一个数字1，则删除文件模式中和这个1在相同位置的属性，在这是指其他人的写权限。这就是掩码要完成的任务。掩码的二进制形式中，出现数字1的位置，相应地关掉一个文件模式属性。看一下 掩码0022的作用：</p>
+<p>Original file mode    —- rw- rw- rw-<br>Mask                000 000 010 010<br>Result                —- rw- r— r—</p>
+<p>又一次，二进制中数字1出现的位置，相对应的属性被删除。再试一下其它的掩码值（一些带数字7的），习惯于掩码的工作原理。</p>
+<h3 id="特殊情况">特殊情况</h3><p>大多数情况下，你不必修改掩码值，系统提供的默认掩码值就很好了。然而，在一些高安全级别下，你要能控制掩码值。</p>
+<p>虽然我们通常看到一个八进制的权限掩码用三位数字来表示，但是从技术层面上来讲，用四位数字来表示它更确切些。为什么呢？因为，除了读取，写入，和执行权限之外，还有其它的，较少用到的权限设置。</p>
+<p>其中之一是setuid位（八进制4000)。当应用到一个可执行文件时，它把有效用户ID从真正的用户（实际运行程序的用户）设置成程序所有者的 ID。这种操作通常会应用到一些由超级用户所拥有的程序。当一个普通用户运行一个程序，这个程序由根用户(root) 所有，并且设置了 setuid 位，这个程序运行时具有超级用户的特权，这样程序就可以 访问普通用户禁止访问的文件和目录。很明显，因为这会引起安全方面的问题，所有可以 设置 setuid 位的程序个数，必须控制在绝对小的范围内。</p>
+<p>第二个是setgid位（八进制2000），这个相似于setuid位，把有效用户组ID从真正的用户组ID更改为文件所有者的组ID。如果设置了一个目录的 setgid 位，则目录中新创建的文件具有这个目录用户组的所有权，而不是文件创建者所属用户组的所有权。对于共享目录来说，当一个普通用户组中的成员，需要访问共享目录中的所有文件，而不管文件所有者的主用户组时，那么设置setgid位很有用处。</p>
+<p>第三个是sticky位（八进制1000），这个继承于Unix，在Unix中，它可能把一个可执行文件标志为“不可交换的”。在Linux 中，会忽略文件的sticky位，但是如果一个目录设置了sticky 位，那么它能阻止用户删除或重命名文件，除非用户是这个目录的所有者，或者是文件所有者，或是 超级用户。这个经常用来控制访问共享目录，比方说/tmp。</p>
+<h3 id="PHP与umask">PHP与umask</h3><p>mkdir函数<br>说明：bool mkdir ( string $pathname [, int $mode = 0777 [, bool $recursive = false [, resource $context ]]] )</p>
+<p>默认的 mode 是 0777，意味着最大可能的访问权。有关 mode 的更多信息请阅读 chmod() 页面。<br>Note:<br>mode 在 Windows 下被忽略。<br><strong>注意也许想用八进制数指定模式，也就是说该数应以零打头。模式也会被当前的umask修改，可以用umask()来改变。</strong><br>也就是说mode是0777的情况下，如果umask是0022,实际创建的文件夹是0744,没有写权限。</p>
 
       
     </div>
@@ -200,7 +177,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/phpunit-单元测试/"> #phpunit, 单元测试 </a>
+            <a href="/tags/linux/"> #linux </a>
+          
+            <a href="/tags/php/"> #php </a>
+          
+            <a href="/tags/umask/"> #umask </a>
           
         </div>
       
@@ -209,13 +190,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/10/30/umask/">umask</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/06/01/高效的团队开发环境/">高效的团队开发环境</a>
+              <a href="/2015/06/02/phpunit/">phpunit</a>
             
           </div>
         </div>
@@ -231,8 +210,8 @@
     
       <div class="comments" id="comments">
         
-          <div class="ds-thread" data-thread-key="2015/06/02/phpunit/"
-               data-title="phpunit" data-url="http://lvyalin.github.com/2015/06/02/phpunit/">
+          <div class="ds-thread" data-thread-key="2015/10/30/umask/"
+               data-title="umask" data-url="http://lvyalin.github.com/2015/10/30/umask/">
           </div>
         
       </div>
@@ -334,7 +313,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#单元测试的四个阶段："><span class="nav-number">1.</span> <span class="nav-text">单元测试的四个阶段：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写PHPUNIT测试"><span class="nav-number">2.</span> <span class="nav-text">编写PHPUNIT测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHPUNIT与YAF结合"><span class="nav-number">3.</span> <span class="nav-text">PHPUNIT与YAF结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局状态"><span class="nav-number">4.</span> <span class="nav-text">全局状态</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单解释下"><span class="nav-number">1.</span> <span class="nav-text">简单解释下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特殊情况"><span class="nav-number">2.</span> <span class="nav-text">特殊情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHP与umask"><span class="nav-number">3.</span> <span class="nav-text">PHP与umask</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
