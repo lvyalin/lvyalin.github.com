@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="PHP,phpunit,单元测试," />
+  <meta name="keywords" content="日志,监控,规范," />
 
 
 
@@ -45,7 +45,7 @@
   </script>
 
 
-  <title> phpunit // lvyalin blog </title>
+  <title> 日志收集 // lvyalin blog </title>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
           
           
             
-              phpunit
+              日志收集
             
           
         </h1>
@@ -133,7 +133,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-06-02
+          发表于 2015-10-28
         </span>
 
         
@@ -142,8 +142,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/06/02/phpunit/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/06/02/phpunit/"></span>
+            <a href="/2015/10/28/日志收集/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/28/日志收集/"></span>
             </a>
           </span>
           
@@ -157,41 +157,26 @@
       
 
       
-        <h3 id="单元测试的四个阶段：">单元测试的四个阶段：</h3><ol>
-<li>建立基境(fixture)</li>
-<li>执行被测系统</li>
-<li>验证结果</li>
-<li>拆除基境(fixture)</li>
+        <h3 id="日志重要性">日志重要性</h3><p>线上日志是线上业务运行情况分析，数据统计，应用级监控，故障debug排查的数据来源和依据，有时候甚至是唯一来源。<br>一个公司应该形成一套统一的日志规范，收集方式，线上查看模式，日志永久存储，也可以对接公司数据统计部门和研发部门。日志服务是一个互联网公司的基础服务之一。</p>
+<h3 id="方案的使用场景">方案的使用场景</h3><p>中小型企业，每日产生日志量在TB级以下，因为一旦进入每日产生TB级数据，需要采用大数据存储模式和分析，这就是另外的一个话题了。</p>
+<a id="more"></a>
+<h3 id="日志规范">日志规范</h3><p>日志等级，标准日志规范规定了日志的8个等级， RFC 5424 中定义的八个等级的日志：debug,info,notice,warning,error,critical,alert以及emergency。<a href="http://tools.ietf.org/html/rfc5424" target="_blank" rel="external">日志规范</a>。<br>日志文件命名，/logs/域名/资源定位符/日志等级.日期.log 比如debug日志 /logs/lvyalin.com/index/debug.20151031.log<br>日志记录方式，每块有意义的内容记录在一行，此处做的原因是便于程序处理，如果程序运行的时候类似控制台输出模式，有几个问题：</p>
+<ol>
+<li>需要后续处理程序，处理开始位和结束位。以分割一个有意义的日志内容。</li>
+<li>如果是高并发多进程/线程处理程序，如果不加广义日志写锁，会导致日志写的杂乱，一个进程写的不在一起，如果加广义日志写锁，影响程序性能。每个请求的某一类型日志落到一个日志的一行，简单暴力。</li>
 </ol>
-<p>什么是基境(fixture)？基境(fixture)是对开始执行某个测试时应用程序和数据库所处初始状态的描述。在编写测试时，最费时的部分之一是编写代码来将整个场景设置成某个已知的状态，并在测试结束后将其复原到初始状态。这个已知的状态称为测试的 基境(fixture)。<br><a id="more"></a></p>
-<h3 id="编写PHPUNIT测试">编写PHPUNIT测试</h3><p><a href="https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html" target="_blank" rel="external">https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html</a></p>
-<h3 id="PHPUNIT与YAF结合">PHPUNIT与YAF结合</h3><p>与YAF路由结合，轻易地调用你的任何一个路由来测试<br>$response = $this-&gt;execRequest($method, $uri, $parameters);<br>$this-&gt;assertEquals(‘Hello World’, $response);</p>
-<p>TestCase基类<br>&lt;?php<br>class TestCase extends \PHPUnit_Framework_TestCase {<br>    protected static $_app;</p>
-<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">()</span></span>{
-    <span class="variable">$application</span> = \Yaf\Registry::get(<span class="string">'application'</span>);
-    <span class="keyword">if</span> (!<span class="variable">$application</span>) {
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = (<span class="keyword">new</span> \Yaf\Application(APP_CONF . <span class="string">'/application.ini'</span>))-&gt;bootstrap();
-        \Yaf\Registry::set(<span class="string">'application'</span>, <span class="keyword">self</span>::<span class="variable">$_app</span>);
-    }<span class="keyword">else</span>{
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = <span class="variable">$application</span>;
-    }
-}
-
-<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">execRequest</span><span class="params">(<span class="variable">$method</span>, <span class="variable">$controller</span>, <span class="variable">$params</span> = array<span class="params">()</span>)</span></span>{
-    <span class="variable">$request</span> = <span class="keyword">new</span> \Yaf\Request\Simple(<span class="variable">$method</span>, <span class="string">'index'</span>, <span class="variable">$controller</span>, <span class="string">'index'</span>, <span class="variable">$params</span>);
-    <span class="keyword">if</span>(strtolower(<span class="variable">$method</span>) === <span class="string">"post"</span>){
-        <span class="variable">$_POST</span> = <span class="variable">$request</span>-&gt;getParams();
-    }<span class="keyword">else</span>{
-        <span class="variable">$_GET</span> = <span class="variable">$request</span>-&gt;getParams();
-    }
-    <span class="keyword">return</span> <span class="keyword">self</span>::<span class="variable">$_app</span>-&gt;getDispatcher()-&gt;dispatch(<span class="variable">$request</span>);
-}
-</code></pre><p>}<br>?&gt;</p>
-<p>测试组件和类，可以直接调用。</p>
-<h3 id="全局状态">全局状态</h3><p>使用单件(singleton)的代码很难测试。使用全局变量的代码也一样。通常情况下，欲测代码和全局变量之间会强烈耦合，并且其创建无法控制。另外一个问题是，一个测试对全局变量的改变可能会破坏另外一个测试。</p>
-<p>在PHP中，全局变量是这样运作的：全局变量 $foo = ‘bar’;<br>实际上是存储为 $GLOBALS[‘foo’] = ‘bar’; 的。<br>$GLOBALS这个变量是一种被称为超全局变量的变量。<br>超全局变量是一种在任何变量作用域中都总是可用的内建变量。<br>在函数或者方法的变量作用域中，要访问全局变量 $foo，可以直接访问 $GLOBALS[‘foo’]，或者用 global $foo;来创建一个引用全局变量的局部变量。除了全局变量，类的静态属性也是一种全局状态。</p>
-<p>默认情况下，PHPUnit用一种更改全局变量与超全局变量($GLOBALS、$_ENV、$_POST、$_GET、$_COOKIE、$_SERVER、$_FILES、$_REQUEST)不会影响到其他测试的方式来运行所有测试。同时，还可以选择将这种隔离扩展到类的静态属性。</p>
-<p>注意，对全局变量和类的静态属性的备份与还原操作使用了 serialize() 与 unserialize()。某些类的实例对象（比如 PDO）无法序列化，因此如果把这样一个对象存放在比如说 $GLOBALS 数组内时，备份操作就会出问题。@backupGlobals 标注可以用来控制对全局变量的备份与还原操作。</p>
+<p>日志记录内容，固定内容：时间、贯彻请求上下文的ID、服务器IP、远程IP、请求唯一资源定位符，后面根据日志等级加入不同的内容。用一个特殊标示分割。</p>
+<h3 id="集中收集处理">集中收集处理</h3><p>因为现在普遍架构是多机无状态部署，日志需要集中收集回来才能分析处理存储。不可能在每天机器上单独处理。<br>集中收集方法采用的是rsyslog。</p>
+<p>rsyslog的优势</p>
+<ol>
+<li>rsyslog足够稳定，有队列，有落地策略，有失效重发不会丢失数据</li>
+<li>rsyslog在linux服务器上普遍安装，也作为系统日志的标准，业内普及度好</li>
+<li>rsyslog数据传输效率高</li>
+<li>rsyslog扩展性好，数据通过管道无缝传递给外部程序，这样可以使用你熟悉的任何语言处理，后面日志落地和转发服务就是基于rsyslog扩展</li>
+</ol>
+<p>rsyslog的配置</p>
+<h3 id="高效的日志转发">高效的日志转发</h3><p>rsyslog的模块转发，todo 如何转发，todo 性能如何<br>转发存储<br>转发监控<br>转发统计</p>
+<h3 id="友好的日志查阅服务">友好的日志查阅服务</h3><p>提供web页面的日志查阅服务。之所以不提供直接登陆服务器查看是因为那样权限太大，而且不容易做限制。<br>权限做了分离和限制。接入公司的统一研发平台，校验工程师的ldap密码和二步验证。只允许查看相关项目的日志。<br>日志数据做了脱敏处理。对身份证号码，手机号，姓名，邮箱等敏感信息做脱敏打码展示。避免了敏感信息泄露。<br>技术方法简单一提，不采用标准HTTP服务，原因大面有2点，1.日志服务查阅执行时间很长，标准HTTP（LNMP）提供高效快速服务，体现在有超时时间，进程复用上。比如有10个员工查阅服务，耗时5分钟，就会占用10个php-fpm进程，且不释放。后面来的用户只能等待。2.查询服务类似终端web，需要数据实时反馈，比如tailf,需要及时通讯，不能轮询，这样就需要双向通信，websocket就是一个比较好的选择。采用websocketd(<a href="https://github.com/joewalnes/websocketd),通过读写STDIN和STDOUT来和websocketd交互。因为是标准的读写接口，所以你的程序可以使用任何语言来处理。这样逻辑处理程序用PHP写就行了。" target="_blank" rel="external">https://github.com/joewalnes/websocketd),通过读写STDIN和STDOUT来和websocketd交互。因为是标准的读写接口，所以你的程序可以使用任何语言来处理。这样逻辑处理程序用PHP写就行了。</a></p>
 
       
     </div>
@@ -200,11 +185,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/PHP/"> #PHP </a>
-          
-            <a href="/tags/phpunit/"> #phpunit </a>
-          
-            <a href="/tags/单元测试/"> #单元测试 </a>
+            <a href="/tags/日志-监控-规范/"> #日志,监控,规范 </a>
           
         </div>
       
@@ -213,13 +194,13 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/10/28/日志收集/">日志收集</a>
+              <a href="/2015/10/30/umask/">umask</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/06/01/高效的团队开发环境/">高效的团队开发环境</a>
+              <a href="/2015/06/02/phpunit/">phpunit</a>
             
           </div>
         </div>
@@ -235,8 +216,8 @@
     
       <div class="comments" id="comments">
         
-          <div class="ds-thread" data-thread-key="2015/06/02/phpunit/"
-               data-title="phpunit" data-url="http://lvyalin.github.com/2015/06/02/phpunit/">
+          <div class="ds-thread" data-thread-key="2015/10/28/日志收集/"
+               data-title="日志收集" data-url="http://lvyalin.github.com/2015/10/28/日志收集/">
           </div>
         
       </div>
@@ -338,7 +319,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#单元测试的四个阶段："><span class="nav-number">1.</span> <span class="nav-text">单元测试的四个阶段：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写PHPUNIT测试"><span class="nav-number">2.</span> <span class="nav-text">编写PHPUNIT测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHPUNIT与YAF结合"><span class="nav-number">3.</span> <span class="nav-text">PHPUNIT与YAF结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局状态"><span class="nav-number">4.</span> <span class="nav-text">全局状态</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#日志重要性"><span class="nav-number">1.</span> <span class="nav-text">日志重要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案的使用场景"><span class="nav-number">2.</span> <span class="nav-text">方案的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#日志规范"><span class="nav-number">3.</span> <span class="nav-text">日志规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集中收集处理"><span class="nav-number">4.</span> <span class="nav-text">集中收集处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#高效的日志转发"><span class="nav-number">5.</span> <span class="nav-text">高效的日志转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#友好的日志查阅服务"><span class="nav-number">6.</span> <span class="nav-text">友好的日志查阅服务</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

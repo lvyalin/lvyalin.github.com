@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="PHP,phpunit,单元测试," />
+  <meta name="keywords" content="PHP,框架," />
 
 
 
@@ -45,7 +45,7 @@
   </script>
 
 
-  <title> phpunit // lvyalin blog </title>
+  <title> 应用框架 // lvyalin blog </title>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
           
           
             
-              phpunit
+              应用框架
             
           
         </h1>
@@ -133,7 +133,7 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-06-02
+          发表于 2015-12-03
         </span>
 
         
@@ -142,8 +142,8 @@
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/06/02/phpunit/#comments" >
-              <span class="post-comments-count ds-thread-count" data-thread-key="2015/06/02/phpunit/"></span>
+            <a href="/2015/12/03/应用框架/#comments" >
+              <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/03/应用框架/"></span>
             </a>
           </span>
           
@@ -157,41 +157,87 @@
       
 
       
-        <h3 id="单元测试的四个阶段：">单元测试的四个阶段：</h3><ol>
-<li>建立基境(fixture)</li>
-<li>执行被测系统</li>
-<li>验证结果</li>
-<li>拆除基境(fixture)</li>
+        <h3 id="大家对框架共识是：">大家对框架共识是：</h3><p>框架是规定了整个web服务请求实现主体流程结构。并且把web服务的流程进行抽象和分离。<br>将复杂的业务逻辑抽象分离，使具有共同特性的模块聚集到一起，是之低耦合高复用，让业务工程师更加关注业务逻辑。</p>
+<h3 id="我想要的还有：">我想要的还有：</h3><ul>
+<li>实现公司级框架和类库共享，实现公共流程封装，提升开发效率，形成公司级开发规范</li>
+<li>实现有完整逻辑的独立代码模块共享，独立入口独立加载，但有逻辑或者数据层面的交互，比如管理后台，形成高质量稳定代码，提升开发效率</li>
+<li>高度配合基础架构，形成从前端到后端，从操作系统底层到语言层面的一套架构，解决web应用高可用，高性能，高伸缩，高扩展及安全性的要求</li>
+<li>高度配合公司级研发体系，形成研发体系中的一环，与研发环境（虚拟机镜像，研发测试网络等），运维体系（代码发布，统计监控等）等会与之形成交叉。举个简单例子，你用框架做完项目上线后，监控系统自动发现注册新项目，并对其监控报警。</li>
+<li>实现分工明确，工程师水平不同分工，前后端之间分工，程序流程上的分工</li>
+</ul>
+<p>其实我想要的是研发生态中的一环。</p>
+<a id="more"></a>
+<h3 id="我们如何做的？">我们如何做的？</h3><p>1.共识部分也就是主体流程结构部分。采用YAF。之所以用YAF就是足够专注，只干了我认为一个骨架该干的事。<br>框架基础功能包括</p>
+<ul>
+<li>唯一入口</li>
+<li>引导程序 bootstrap</li>
+<li>路由</li>
+<li>请求周期管理</li>
+<li>类自动加载</li>
+</ul>
+<p>YAF干的很核心而且很明确，这点我很喜欢，富框架干的越多意味着我们将来改动就越多，慢慢就脱离了原始框架。<br>而且一旦涉及到业务，最好从一开始就自己来，而且所有富框架很难兼顾所有的场景。或者说根本没法融入到你的研发体系和线上基础架构里去。</p>
+<p>2.公司级框架和类库共享<br>统一封装工具类库</p>
+<ul>
+<li>缓存机制及各种实现</li>
+<li>CDN封装</li>
+<li>加解密各种实现</li>
+<li>DB（mysql、redis）</li>
+<li>分布式文件系统</li>
+<li>HTTP封装</li>
+<li>日志记录</li>
+<li>消息推送（短信，邮件等）</li>
+<li>文档封装（word、pdf、excel）</li>
+<li>队列机制及各种实现</li>
+<li>安全组件封装</li>
+<li>系统性能追踪</li>
+<li>各种锁（排他锁、同步、异步锁）</li>
+<li>RPC</li>
+<li>多进程管理</li>
+<li>各种参数验证管理</li>
+<li>等</li>
+</ul>
+<p>统一封装补充YAF的类库</p>
+<ul>
+<li>单元测试</li>
+<li>异常处理</li>
+<li>请求体和响应体</li>
+<li>autoload支持composer</li>
+<li>等</li>
+</ul>
+<p>统一封装模块的父类，比如control层的父类，异常的父类等，实际上是框架和逻辑代码的衔接层<br>统一封装公共流程</p>
+<ul>
+<li>频率限制器</li>
+<li>验证码发送和验证（图形、短信、邮件）</li>
+<li>基于cookie的auth认证和校验</li>
+<li>等</li>
+</ul>
+<p>3.独立代码模块共享，模块相对独立，从入口到配置都是独立的，只是在数据层和逻辑层与主干有交互。</p>
+<ul>
+<li>微信模块（实现了微信公共号开发所需要所有功能，包括多客服）</li>
+<li>后台模块（实现了后台模块的账户管理接ladp和google认证，权限管理，分组管理，安全控制）<ol>
+<li>后台模块为了开发效率，还开发各种组件，比如列表组件。几行固定代码搞定简单列表分页搜索排序导出功能。一键引入即时生效。对于生成效率提升是很明显的。举个例子，一般来说后台功能在项目开发的时候都是随说随做，集中半天一起做完。复杂需求除外。</li>
 </ol>
-<p>什么是基境(fixture)？基境(fixture)是对开始执行某个测试时应用程序和数据库所处初始状态的描述。在编写测试时，最费时的部分之一是编写代码来将整个场景设置成某个已知的状态，并在测试结束后将其复原到初始状态。这个已知的状态称为测试的 基境(fixture)。<br><a id="more"></a></p>
-<h3 id="编写PHPUNIT测试">编写PHPUNIT测试</h3><p><a href="https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html" target="_blank" rel="external">https://phpunit.de/manual/4.8/zh_cn/writing-tests-for-phpunit.html</a></p>
-<h3 id="PHPUNIT与YAF结合">PHPUNIT与YAF结合</h3><p>与YAF路由结合，轻易地调用你的任何一个路由来测试<br>$response = $this-&gt;execRequest($method, $uri, $parameters);<br>$this-&gt;assertEquals(‘Hello World’, $response);</p>
-<p>TestCase基类<br>&lt;?php<br>class TestCase extends \PHPUnit_Framework_TestCase {<br>    protected static $_app;</p>
-<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">()</span></span>{
-    <span class="variable">$application</span> = \Yaf\Registry::get(<span class="string">'application'</span>);
-    <span class="keyword">if</span> (!<span class="variable">$application</span>) {
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = (<span class="keyword">new</span> \Yaf\Application(APP_CONF . <span class="string">'/application.ini'</span>))-&gt;bootstrap();
-        \Yaf\Registry::set(<span class="string">'application'</span>, <span class="keyword">self</span>::<span class="variable">$_app</span>);
-    }<span class="keyword">else</span>{
-        <span class="keyword">self</span>::<span class="variable">$_app</span> = <span class="variable">$application</span>;
-    }
-}
-
-<span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">execRequest</span><span class="params">(<span class="variable">$method</span>, <span class="variable">$controller</span>, <span class="variable">$params</span> = array<span class="params">()</span>)</span></span>{
-    <span class="variable">$request</span> = <span class="keyword">new</span> \Yaf\Request\Simple(<span class="variable">$method</span>, <span class="string">'index'</span>, <span class="variable">$controller</span>, <span class="string">'index'</span>, <span class="variable">$params</span>);
-    <span class="keyword">if</span>(strtolower(<span class="variable">$method</span>) === <span class="string">"post"</span>){
-        <span class="variable">$_POST</span> = <span class="variable">$request</span>-&gt;getParams();
-    }<span class="keyword">else</span>{
-        <span class="variable">$_GET</span> = <span class="variable">$request</span>-&gt;getParams();
-    }
-    <span class="keyword">return</span> <span class="keyword">self</span>::<span class="variable">$_app</span>-&gt;getDispatcher()-&gt;dispatch(<span class="variable">$request</span>);
-}
-</code></pre><p>}<br>?&gt;</p>
-<p>测试组件和类，可以直接调用。</p>
-<h3 id="全局状态">全局状态</h3><p>使用单件(singleton)的代码很难测试。使用全局变量的代码也一样。通常情况下，欲测代码和全局变量之间会强烈耦合，并且其创建无法控制。另外一个问题是，一个测试对全局变量的改变可能会破坏另外一个测试。</p>
-<p>在PHP中，全局变量是这样运作的：全局变量 $foo = ‘bar’;<br>实际上是存储为 $GLOBALS[‘foo’] = ‘bar’; 的。<br>$GLOBALS这个变量是一种被称为超全局变量的变量。<br>超全局变量是一种在任何变量作用域中都总是可用的内建变量。<br>在函数或者方法的变量作用域中，要访问全局变量 $foo，可以直接访问 $GLOBALS[‘foo’]，或者用 global $foo;来创建一个引用全局变量的局部变量。除了全局变量，类的静态属性也是一种全局状态。</p>
-<p>默认情况下，PHPUnit用一种更改全局变量与超全局变量($GLOBALS、$_ENV、$_POST、$_GET、$_COOKIE、$_SERVER、$_FILES、$_REQUEST)不会影响到其他测试的方式来运行所有测试。同时，还可以选择将这种隔离扩展到类的静态属性。</p>
-<p>注意，对全局变量和类的静态属性的备份与还原操作使用了 serialize() 与 unserialize()。某些类的实例对象（比如 PDO）无法序列化，因此如果把这样一个对象存放在比如说 $GLOBALS 数组内时，备份操作就会出问题。@backupGlobals 标注可以用来控制对全局变量的备份与还原操作。</p>
+</li>
+</ul>
+<p>4.基础架构<br>提供环境自动配置，彻底做到线上线下无感知</p>
+<ul>
+<li>基于环境的服务端调用配置（mysql，redis）</li>
+<li>基于环境的日志处理方法</li>
+<li>基于环境的性能分析</li>
+<li>基于环境的debug模式是否开启</li>
+<li>基于环境的文件驱动模式</li>
+</ul>
+<p>提供基于composer的外部引入，便于各种外部优秀类包引入</p>
+<p>提供上线变更支持</p>
+<p>提供与日志平台对接规范</p>
+<p>提供与监控平台对接规范</p>
+<p>提供与追踪系统对接规范</p>
+<p>5.开发模式<br>提供代码脚手架功能</p>
+<ul>
+<li>提供开发实现快速启动项目，初始环境、数据、代码结构一键部署</li>
+<li>提供开发实现快速介入项目，环境、数据、代码一键部署</li>
+<li>提供测试一个干净的测试锁环境</li>
+</ul>
 
       
     </div>
@@ -202,9 +248,7 @@
           
             <a href="/tags/PHP/"> #PHP </a>
           
-            <a href="/tags/phpunit/"> #phpunit </a>
-          
-            <a href="/tags/单元测试/"> #单元测试 </a>
+            <a href="/tags/框架/"> #框架 </a>
           
         </div>
       
@@ -213,13 +257,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/10/28/日志收集/">日志收集</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/06/01/高效的团队开发环境/">高效的团队开发环境</a>
+              <a href="/2015/10/30/umask/">umask</a>
             
           </div>
         </div>
@@ -235,8 +277,8 @@
     
       <div class="comments" id="comments">
         
-          <div class="ds-thread" data-thread-key="2015/06/02/phpunit/"
-               data-title="phpunit" data-url="http://lvyalin.github.com/2015/06/02/phpunit/">
+          <div class="ds-thread" data-thread-key="2015/12/03/应用框架/"
+               data-title="应用框架" data-url="http://lvyalin.github.com/2015/12/03/应用框架/">
           </div>
         
       </div>
@@ -338,7 +380,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#单元测试的四个阶段："><span class="nav-number">1.</span> <span class="nav-text">单元测试的四个阶段：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写PHPUNIT测试"><span class="nav-number">2.</span> <span class="nav-text">编写PHPUNIT测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHPUNIT与YAF结合"><span class="nav-number">3.</span> <span class="nav-text">PHPUNIT与YAF结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局状态"><span class="nav-number">4.</span> <span class="nav-text">全局状态</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#大家对框架共识是："><span class="nav-number">1.</span> <span class="nav-text">大家对框架共识是：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我想要的还有："><span class="nav-number">2.</span> <span class="nav-text">我想要的还有：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我们如何做的？"><span class="nav-number">3.</span> <span class="nav-text">我们如何做的？</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
